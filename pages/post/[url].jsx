@@ -5,6 +5,10 @@ import Article from '../../models/article'
 import showdown from 'showdown'
 import { useEffect, useState } from 'react'
 import Navbar from '../../src/Components/Navbar/Navbar'
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
+import { Button, Paper, Typography } from '@mui/material'
+import { Box } from '@mui/system'
 
 export default function Post({ article }) {
     const converter = new showdown.Converter({ tables: true, tasklists: true, tablesHeaderId: true, strikethrough: true, simplifiedAutoLink: true, ghCompatibleHeaderId: true, emoji: true }),
@@ -12,13 +16,14 @@ export default function Post({ article }) {
         html = converter.makeHtml(text)
 
     const [user, setUser] = useState({})
+    const [ups, setUps] = useState(article.votes.ups)
+    const [downs, setDowns] = useState(article.votes.downs)
+
     useEffect(() => {
         if (localStorage.getItem('user')) {
             setUser(JSON.parse(localStorage.getItem('user')))
         }
     }, [])
-
-
 
     return (
         <div className={styles.container}>
@@ -30,6 +35,78 @@ export default function Post({ article }) {
             <Navbar user={user} />
 
             <h1 className={styles.title}>{article.title}</h1>
+
+            <Box
+                sx={{
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'row',
+                }}>
+                <Button
+                    onClick={async (e) => {
+                        e.stopPropagation()
+                        const request = await fetch('/api/voteArticle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                url: article.url,
+                                vote: true,
+                                email: user.email
+                            })
+                        })
+                        if (request.status === 200) {
+                            const response = await request.json()
+                            setUps(response.ups)
+                            setDowns(response.downs)
+                        }
+                    }}>
+                    <ThumbUpOffAltIcon />
+                </Button>
+                <Typography
+                    sx={{
+                        padding: '0 !important',
+                        width: '30px !important',
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                    }}
+                >
+                    {ups}
+                </Typography>
+                <Button
+                    onClick={async (e) => {
+                        e.stopPropagation()
+                        const request = await fetch('/api/voteArticle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                url: article.url,
+                                vote: false,
+                                email: user.email
+                            })
+                        })
+                        if (request.status === 200) {
+                            const response = await request.json()
+                            setUps(response.ups)
+                            setDowns(response.downs)
+                        }
+                    }}>
+                    <ThumbDownOffAltIcon />
+                </Button>
+                <Typography
+                    sx={{
+                        padding: '0 !important',
+                        width: '30px !important',
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                    }}
+                >
+                    {downs}
+                </Typography>
+            </Box>
             <main className={styles.main}>
                 <div dangerouslySetInnerHTML={{
                     __html: html

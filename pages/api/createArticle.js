@@ -16,7 +16,7 @@ export default async function handler(req, res) {
                     imageUrl: req.body.imageUrl,
                     description: req.body.description,
                     longDescription: req.body.content,
-                    createdBy: user.email
+                    createdBy: user._id
                 })
                 article.save(function (err) {
                     if (err) {

@@ -1,5 +1,31 @@
 import mongoose from "mongoose"
 
+const voteSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    vote: {
+        type: Boolean,
+        required: true
+    }
+})
+
+const votesSchema = new mongoose.Schema({
+    ups: {
+        type: Number,
+        default: 0
+    },
+    downs: {
+        type: Number,
+        default: 0
+    },
+    by: {
+        type: [voteSchema],
+        default: []
+    },
+})
+
 const articleSchema = new mongoose.Schema({
     url: {
         type: String,
@@ -22,17 +48,32 @@ const articleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    likes: {},
-    votes: {},
+    votes: {
+        type: votesSchema,
+        required: true,
+        default: {
+            ups: 0,
+            downs: 0,
+            by: []
+        }
+    },
     createdAt: {
         type: Date,
         required: true,
         default: Date.now()
     },
     createdBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
         required: true
     }
+})
+
+votesSchema.pre('save', function (next) {
+    var votes = this
+    votes.ups = votes.by.filter(vote => vote.vote).length
+    votes.downs = votes.by.filter(vote => !vote.vote).length
+    next()
 })
 
 mongoose.models = {}
