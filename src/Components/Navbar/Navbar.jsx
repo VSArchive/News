@@ -9,21 +9,9 @@ import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
-import { FormControlLabel, Input, OutlinedInput, Switch } from '@mui/material'
+import { Button } from '@mui/material'
 
 const settings = ['Profile', 'Logout']
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-}
 
 const Navbar = ({ user }) => {
     const [anchorElUser, setAnchorElUser] = React.useState(null)
@@ -57,11 +45,23 @@ const Navbar = ({ user }) => {
                     </Typography>
                     <Box sx={{ display: 'flex' }}>
 
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="User" src={user.picture} />
-                            </IconButton>
-                        </Tooltip>
+                        {(user && user.email) ? (
+                            <Tooltip title="Open settings">
+                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <Avatar alt="User" src={user.profilePicture} />
+                                </IconButton>
+                            </Tooltip>
+                        ) : (
+                            <Button
+                                onClick={() => window.location.href = '/login'}
+                                variant="contained"
+                                color="primary"
+                                sx={{ margin: '20px', width: '100%', marginLeft: '0px' }}>
+                                <Typography>
+                                    Sign In
+                                </Typography>
+                            </Button>
+                        )}
                         <Box sx={{ flexGrow: 0 }}>
                             <Menu
                                 sx={{ mt: '45px' }}
