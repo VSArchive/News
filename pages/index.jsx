@@ -19,8 +19,7 @@ const Home = ({ articles }) => {
 	return (
 		<div className={styles.container}>
 			<Head>
-				<title title>Vineel Sai | Blog</title>
-				<meta name="description" content="Blog by Vineel Sai"></meta>
+				<title title>DV News</title>
 				<link rel="icon" href="/logo.png" />
 			</Head>
 
@@ -70,6 +69,10 @@ const Home = ({ articles }) => {
 											<Button
 												onClick={async (e) => {
 													e.stopPropagation()
+													if (!user || !user._id) {
+														window.location.href = `/login`
+														return
+													}
 													const request = await fetch('/api/voteArticle', {
 														method: 'POST',
 														headers: {
@@ -102,6 +105,10 @@ const Home = ({ articles }) => {
 											<Button
 												onClick={async (e) => {
 													e.stopPropagation()
+													if (!user || !user._id) {
+														window.location.href = `/login`
+														return
+													}
 													const request = await fetch('/api/voteArticle', {
 														method: 'POST',
 														headers: {

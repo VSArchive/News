@@ -26,6 +26,29 @@ const votesSchema = new mongoose.Schema({
     },
 })
 
+const commentsSchema = new mongoose.Schema({
+    by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    comment: {
+        type: String,
+        required: true
+    },
+    votes: {
+        type: votesSchema,
+        default: {
+            ups: 0,
+            downs: 0,
+            by: []
+        }
+    },
+    commentedAt: {
+        type: Date,
+        default: Date.now(),
+    }
+})
+
 const articleSchema = new mongoose.Schema({
     url: {
         type: String,
@@ -56,6 +79,11 @@ const articleSchema = new mongoose.Schema({
             downs: 0,
             by: []
         }
+    },
+    comments: {
+        type: [commentsSchema],
+        required: true,
+        default: []
     },
     createdAt: {
         type: Date,
