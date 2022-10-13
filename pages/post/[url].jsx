@@ -2,7 +2,7 @@ import Head from 'next/head'
 import mongoose from 'mongoose'
 import styles from '../../styles/Home.module.css'
 import Article from '../../models/article'
-import showdown from 'showdown'
+import ReactMarkdown from 'react-markdown'
 import { useEffect, useState, forwardRef } from 'react'
 import Navbar from '../../src/Components/Navbar/Navbar'
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
@@ -11,6 +11,8 @@ import { Avatar, Button, Paper, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
+import gfm from 'remark-gfm';
+
 
 const Alert = forwardRef(function Alert(
     props,
@@ -20,10 +22,6 @@ const Alert = forwardRef(function Alert(
 })
 
 export default function Post({ article }) {
-    const converter = new showdown.Converter({ tables: true, tasklists: true, tablesHeaderId: true, strikethrough: true, simplifiedAutoLink: true, ghCompatibleHeaderId: true, emoji: true }),
-        text = article.longDescription,
-        html = converter.makeHtml(text)
-
     const [user, setUser] = useState({})
     const [ups, setUps] = useState(article.votes.ups)
     const [downs, setDowns] = useState(article.votes.downs)
@@ -60,6 +58,22 @@ export default function Post({ article }) {
             }
         }
 
+        async function updateBy() {
+            const userRequest = await fetch('/api/getUserInfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: article.createdBy
+                })
+            })
+
+            const userResponse = await userRequest.json()
+            article.createdBy = userResponse
+        }
+
+        updateBy()
         updateComments()
     }, [])
 
@@ -77,7 +91,25 @@ export default function Post({ article }) {
 
             <Navbar user={user} />
 
-            <h1 className={styles.title}>{article.title}</h1>
+            <Typography sx={{
+                fontSize: '50px',
+                fontWeight: 'bold',
+                padding: '20px'
+            }} variant='h1'>{article.title}</Typography>
+            <Typography sx={{
+                fontSize: '22px',
+                padding: '10px'
+            }} variant='h4'>{article.description}</Typography>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+            }}>
+                <Avatar src={article.createdBy.profilePicture} />
+                <Typography sx={{
+                    margin: 'auto 0',
+                    padding: '0 10px'
+                }}>By {article.createdBy.firstName}</Typography>
+            </Box>
 
             <Box
                 sx={{
@@ -150,17 +182,20 @@ export default function Post({ article }) {
                     {downs}
                 </Typography>
             </Box>
-            <main className={styles.main}>
-                <div dangerouslySetInnerHTML={{
-                    __html: html
-                }} className={styles.description}></div>
-            </main>
+            <Box sx={{
+                padding: '20px',
+                width: '80%',
+                margin: '0 auto',
+            }}>
+                <ReactMarkdown rehypePlugins={[gfm]} children={article.longDescription}  />
+            </Box>
             <Box sx={{
                 height: '200px',
-                width: '100%',
+                width: '80%',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'auto',
+                margin: '0 auto',
             }}>
                 {
                     comments.sort((a, b) => {

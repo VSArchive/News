@@ -17,7 +17,6 @@ export default async function handler(req, res) {
                 let voted = false
 
                 article.votes.by.map((voter) => {
-                    console.log(voter.user, user._id)
                     if (voter.user.equals(user._id)) {
                         voted = true
                         voter.vote = req.body.vote
