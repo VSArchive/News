@@ -11,7 +11,7 @@ import { Avatar, Button, Paper, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
-import gfm from 'remark-gfm';
+import gfm from 'remark-gfm'
 
 
 const Alert = forwardRef(function Alert(
@@ -187,7 +187,9 @@ export default function Post({ article }) {
                 width: '80%',
                 margin: '0 auto',
             }}>
-                <ReactMarkdown rehypePlugins={[gfm]} children={article.longDescription}  />
+                <ReactMarkdown rehypePlugins={[gfm]}>
+                    {article.longDescription}
+                </ReactMarkdown>
             </Box>
             <Box sx={{
                 height: '200px',
