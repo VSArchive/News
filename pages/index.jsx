@@ -3,15 +3,13 @@ import styles from '../styles/Home.module.css'
 import mongoose from 'mongoose'
 import Articles from '../models/article'
 import { useEffect, useState } from 'react'
-import Navbar from '../src/Components/Navbar/Navbar'
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
-import { Button, Paper, Typography } from '@mui/material'
+import { Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
-const Posts = ({ article }) => {
-	const [ups, setUps] = useState(article.votes.ups)
-	const [downs, setDowns] = useState(article.votes.downs)
+import Navbar from '../src/Components/Navbar/Navbar'
+import Vote from '../src/Components/Vote/Vote'
+
+const Posts = ({ article, user }) => {
 	return (
 		<Paper className={styles.card} onClick={() => {
 			window.location.href = `/post/${article.url}`
@@ -41,85 +39,7 @@ const Posts = ({ article }) => {
 						width: '100%',
 					}}>{article.description.substring(0, 100)}</Typography>
 				</Box>
-				<Box
-					sx={{
-						padding: '20px',
-						display: 'flex',
-						flexDirection: 'row',
-					}}>
-					<Button
-						onClick={async (e) => {
-							e.stopPropagation()
-							if (!user || !user._id) {
-								window.location.href = `/login`
-								return
-							}
-							const request = await fetch('/api/voteArticle', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify({
-									url: article.url,
-									vote: true,
-									email: user.email
-								})
-							})
-							if (request.status === 200) {
-								const response = await request.json()
-								setUps(response.ups)
-								setDowns(response.downs)
-							}
-						}}>
-						<ThumbUpOffAltIcon />
-					</Button>
-					<Typography
-						sx={{
-							padding: '0 !important',
-							width: '30px !important',
-							textAlign: 'center',
-							verticalAlign: 'middle',
-						}}
-					>
-						{ups}
-					</Typography>
-					<Button
-						onClick={async (e) => {
-							e.stopPropagation()
-							if (!user || !user._id) {
-								window.location.href = `/login`
-								return
-							}
-							const request = await fetch('/api/voteArticle', {
-								method: 'POST',
-								headers: {
-									'Content-Type': 'application/json'
-								},
-								body: JSON.stringify({
-									url: article.url,
-									vote: false,
-									email: user.email
-								})
-							})
-							if (request.status === 200) {
-								const response = await request.json()
-								setUps(response.ups)
-								setDowns(response.downs)
-							}
-						}}>
-						<ThumbDownOffAltIcon />
-					</Button>
-					<Typography
-						sx={{
-							padding: '0 !important',
-							width: '30px !important',
-							textAlign: 'center',
-							verticalAlign: 'middle',
-						}}
-					>
-						{downs}
-					</Typography>
-				</Box>
+				<Vote article={article} user={user} />
 			</Box>
 		</Paper>
 	)
@@ -145,7 +65,7 @@ const Home = ({ articles }) => {
 				<div id="posts" className={styles.grid}>
 					{
 						articles.map(article => {
-							return <Posts key={article._id} article={article} />
+							return <Posts key={article._id} article={article} user={user} />
 						})
 					}
 				</div>

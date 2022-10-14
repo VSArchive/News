@@ -12,6 +12,7 @@ import { Box } from '@mui/system'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
 import gfm from 'remark-gfm'
+import Vote from '../../src/Components/Vote/Vote'
 
 
 const Alert = forwardRef(function Alert(
@@ -23,8 +24,6 @@ const Alert = forwardRef(function Alert(
 
 export default function Post({ article }) {
     const [user, setUser] = useState({})
-    const [ups, setUps] = useState(article.votes.ups)
-    const [downs, setDowns] = useState(article.votes.downs)
     const [comment, setComment] = useState('')
     const [comments, setComments] = useState(article.comments)
 
@@ -111,77 +110,7 @@ export default function Post({ article }) {
                 }}>By {article.createdBy.firstName}</Typography>
             </Box>
 
-            <Box
-                sx={{
-                    padding: '20px',
-                    display: 'flex',
-                    flexDirection: 'row',
-                }}>
-                <Button
-                    onClick={async (e) => {
-                        e.stopPropagation()
-                        const request = await fetch('/api/voteArticle', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                url: article.url,
-                                vote: true,
-                                email: user.email
-                            })
-                        })
-                        if (request.status === 200) {
-                            const response = await request.json()
-                            setUps(response.ups)
-                            setDowns(response.downs)
-                        }
-                    }}>
-                    <ThumbUpOffAltIcon />
-                </Button>
-                <Typography
-                    sx={{
-                        padding: '0 !important',
-                        width: '30px !important',
-                        textAlign: 'center',
-                        verticalAlign: 'middle',
-                    }}
-                >
-                    {ups}
-                </Typography>
-                <Button
-                    onClick={async (e) => {
-                        e.stopPropagation()
-                        const request = await fetch('/api/voteArticle', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                url: article.url,
-                                vote: false,
-                                email: user.email
-                            })
-                        })
-                        if (request.status === 200) {
-                            const response = await request.json()
-                            setUps(response.ups)
-                            setDowns(response.downs)
-                        }
-                    }}>
-                    <ThumbDownOffAltIcon />
-                </Button>
-                <Typography
-                    sx={{
-                        padding: '0 !important',
-                        width: '30px !important',
-                        textAlign: 'center',
-                        verticalAlign: 'middle',
-                    }}
-                >
-                    {downs}
-                </Typography>
-            </Box>
+            <Vote article={article} user={user} />
             <Box sx={{
                 padding: '20px',
                 width: '80%',
