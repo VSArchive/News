@@ -56,7 +56,7 @@ const Home = ({ articles }) => {
 		<div className={styles.container}>
 			<Head>
 				<title>DV News</title>
-				<link rel="icon" href="/logo.png" />
+				<link rel="icon" href="/icon.svg" />
 			</Head>
 
 			<Navbar user={user} />
@@ -81,10 +81,11 @@ export async function getServerSideProps() {
 	} catch (error) {
 		console.log(error)
 	}
-	const articles = await Articles.find()
+	let articles = await Articles.find()
+	articles = JSON.parse(JSON.stringify(articles)).sort((a, b) => (b.votes.ups - b.votes.downs) - (a.votes.ups - a.votes.downs))
 	return {
 		props: {
-			articles: JSON.parse(JSON.stringify(articles))
+			articles: articles
 		}
 	}
 }

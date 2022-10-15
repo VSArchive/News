@@ -41,7 +41,7 @@ const Navbar = ({ user }) => {
                         component="div"
                         sx={{ mr: 2, display: { xs: 'none', md: 'flex' }, cursor: 'pointer' }}
                     >
-                        DV News
+                        <img src='/logo.svg' />
                     </Typography>
                     <Box sx={{ display: 'flex' }}>
 

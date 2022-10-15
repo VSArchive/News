@@ -16,10 +16,11 @@ export default async function handler(req, res) {
                     imageUrl: req.body.imageUrl,
                     description: req.body.description,
                     longDescription: req.body.content,
-                    createdBy: user._id
+                    createdBy: user._id,
                 })
                 article.save(function (err) {
                     if (err) {
+                        console.log(err)
                         res.status(400).json({
                             error: "Error saving article"
                         })

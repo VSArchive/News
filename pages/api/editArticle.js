@@ -20,12 +20,15 @@ export default async function handler(req, res) {
                             success: "Article deleted successfully"
                         })
                     } else {
-                        article.update({
+                        article.updateOne({
                             title: req.body.title,
                             url: req.body.url,
                             imageUrl: req.body.imageUrl,
                             description: req.body.description,
-                            longDescription: req.body.content
+                            longDescription: req.body.content,
+                            createdBy: user._id,
+                            comments: article.comments,
+                            votes: article.votes
                         }, function (err) {
                             if (err) {
                                 res.status(400).json({

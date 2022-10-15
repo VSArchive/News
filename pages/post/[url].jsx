@@ -5,14 +5,14 @@ import Article from '../../models/article'
 import ReactMarkdown from 'react-markdown'
 import { useEffect, useState, forwardRef } from 'react'
 import Navbar from '../../src/Components/Navbar/Navbar'
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt'
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt'
 import { Avatar, Button, Paper, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert'
 import gfm from 'remark-gfm'
 import Vote from '../../src/Components/Vote/Vote'
+
+import EditIcon from '@mui/icons-material/Edit'
 
 
 const Alert = forwardRef(function Alert(
@@ -85,16 +85,35 @@ export default function Post({ article }) {
         <div className={styles.container}>
             <Head>
                 <title>{article.title}</title>
-                <link rel="icon" href="/logo.png" />
+                <link rel="icon" href={article.imageUrl} />
             </Head>
 
             <Navbar user={user} />
 
-            <Typography sx={{
-                fontSize: '50px',
-                fontWeight: 'bold',
-                padding: '20px'
-            }} variant='h1'>{article.title}</Typography>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'row',
+            }}>
+                <Typography sx={{
+                    fontSize: '50px',
+                    fontWeight: 'bold',
+                    padding: '20px'
+                }} variant='h1'>{article.title}</Typography>
+                <Button sx={{
+                    display: (user._id !== article.createdBy._id) ? 'none' : 'block',
+                }} onClick={
+                    () => {
+                        if (user._id === article.createdBy._id) {
+                            window.location.href = `/edit/${article.url}`
+                        }
+                    }
+                } disabled={
+                    user._id !== article.createdBy._id
+                }>
+                    <EditIcon />
+                </Button>
+            </Box>
+
             <Typography sx={{
                 fontSize: '22px',
                 padding: '10px'
@@ -111,6 +130,10 @@ export default function Post({ article }) {
             </Box>
 
             <Vote article={article} user={user} />
+            <img style={{
+                width: 'auto',
+                height: '300px',
+            }} src={article.imageUrl} />
             <Box sx={{
                 padding: '20px',
                 width: '80%',
@@ -172,7 +195,7 @@ export default function Post({ article }) {
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
-                width: '100%',
+                width: '80%',
                 padding: '10px',
             }}>
                 <TextField sx={{
