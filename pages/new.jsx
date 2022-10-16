@@ -1,7 +1,16 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import Navbar from '../src/Components/Navbar/Navbar'
+import { useEffect, useState, forwardRef } from 'react'
 import styles from '../styles/Home.module.css'
+import Navbar from '../src/Components/Navbar/Navbar'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert from '@mui/material/Alert'
+
+const Alert = forwardRef(function Alert(
+    props,
+    ref,
+) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const New = () => {
     const [user, setUser] = useState({})
@@ -11,7 +20,10 @@ const New = () => {
     const [imageUrl, setImageUrl] = useState('')
     const [url, setUrl] = useState('')
     const [content, setContent] = useState('')
-    const [message, setMessage] = useState('')
+    
+    const [snackBarState, setSnackBarState] = useState(false)
+    const [errorSnackBarState, setErrorSnackBarState] = useState(false)
+    const [snackBarMessage, setSnackBarMessage] = useState('')
 
     useEffect(() => {
         if (localStorage.getItem('user')) {
@@ -20,6 +32,12 @@ const New = () => {
             window.location.href = '/login'
         }
     }, [])
+
+    const handleSnackBarClose = () => {
+        setSnackBarState(false)
+        setErrorSnackBarState(false)
+    }
+
     return (
         <div className={styles.container}>
             <Head>
@@ -66,14 +84,25 @@ const New = () => {
 
                             if (request.status === 200) {
                                 const response = await request.json()
-                                setMessage(response.success)
+                                setSnackBarMessage(response.success)
+                                setSnackBarState(true)
                             } else {
                                 const response = await request.json()
-                                setMessage(response.error)
+                                setSnackBarMessage(response.error)
+                                setErrorSnackBarState(true)
                             }
                         }} className={styles.submit}>Publish</button>
                     </div>
-                    <p>{message}</p>
+                    <Snackbar open={snackBarState} autoHideDuration={5000} onClose={handleSnackBarClose}>
+                        <Alert severity="success" sx={{ width: '100%' }}>
+                            {snackBarMessage}
+                        </Alert>
+                    </Snackbar>
+                    <Snackbar open={errorSnackBarState} autoHideDuration={5000} onClose={handleSnackBarClose}>
+                        <Alert severity="error" sx={{ width: '100%' }}>
+                            {snackBarMessage}
+                        </Alert>
+                    </Snackbar>
                 </div>
             </main>
         </div >

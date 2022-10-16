@@ -10,6 +10,7 @@ import Avatar from '@mui/material/Avatar'
 import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import { Button } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 
 const settings = ['Profile', 'Logout']
 
@@ -46,11 +47,20 @@ const Navbar = ({ user }) => {
                     <Box sx={{ display: 'flex' }}>
 
                         {(user && user.email) ? (
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="User" src={user.profilePicture} />
-                                </IconButton>
-                            </Tooltip>
+                            <Box>
+                                <Button onClick={() => {
+                                    window.location.href = "/new"
+                                }}>
+                                    <AddIcon sx={{
+                                        color: "white"
+                                    }} />
+                                </Button>
+                                <Tooltip title="Open settings">
+                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                        <Avatar alt="User" src={user.profilePicture} />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                         ) : (
                             <Button
                                 onClick={() => window.location.href = '/login'}
