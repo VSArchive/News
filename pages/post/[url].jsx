@@ -258,6 +258,7 @@ export async function getServerSideProps(context) {
     }
 
     const article = await Article.findOne({ url: context.query.url })
+    mongoose.connection.close()
     return {
         props: {
             article: JSON.parse(JSON.stringify(article))

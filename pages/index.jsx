@@ -83,6 +83,7 @@ export async function getServerSideProps() {
 	}
 	let articles = await Articles.find()
 	articles = JSON.parse(JSON.stringify(articles)).sort((a, b) => (b.votes.ups - b.votes.downs) - (a.votes.ups - a.votes.downs))
+	mongoose.connection.close()
 	return {
 		props: {
 			articles: articles
